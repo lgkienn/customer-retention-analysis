@@ -245,4 +245,4 @@ The analysis is also delivered as a Streamlit app with RFM distribution, an R×F
 **Lương Thế Kiện (Jay)**
 Data Analyst — customer analytics, retention, and BI
 
-[GitHub](https://github.com/lgkienn) · [LinkedIn](https://linkedin.com/in/your-profile) · [Email](mailto:you@email.com)
+[GitHub](https://github.com/lgkienn) · [LinkedIn](https://linkedin.com/in/your-profile](https://www.linkedin.com/in/ltkien1706 ) · [Email](mailto:luongkienss68@gmail.com)

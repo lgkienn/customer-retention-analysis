@@ -235,8 +235,8 @@ The analysis is also delivered as a Streamlit app with RFM distribution, an R×F
 - **Truncated final cohorts.** Data ends 2011-12-09, so the newest 1–2 cohorts and the final partial month have a shortened observation window and understate retention.
 
 **Future Improvements**
-- Add a survival-analysis view (time-to-second-purchase) to quantify the month-2 cliff more precisely.
-- Join a product table to see whether specific first-purchase categories predict retention.
+- Add a survival-analysis view (time-to-second-purchase) to measure, in days, how long customers take to reorder and what share never return — a more precise view of the month-2 cliff than monthly cohorts, and one that handles still-active customers correctly.
+- Compare retention by country (UK vs non-UK) to see whether the loyal core is geographically concentrated and whether overseas customers churn differently.
 
 ---
 

@@ -106,20 +106,29 @@ Mapping customers to RFM segments makes the imbalance concrete. Champions and Lo
 
 ### 1. Fix month-2 retention with a first-30-days journey
 **Based on:** Finding 2
+
 **Action:** Build a welcome / second-order journey whose single goal is a second purchase within 30 days — measured on month-2 retention, not open or click rate.
+
 **Expected outcome:** Because repeat buyers are worth 6.9× a one-time buyer, even small gains in month-2 retention compound into disproportionate revenue. The target retention lift is a decision for marketing to set against campaign cost, not a number this analysis can fix.
+
 **Owner:** CRM / lifecycle marketing.
 
 ### 2. Protect the loyal core before it slips
 **Based on:** Findings 3 & 4
+
 **Action:** Put the top 5% of customers and all Champions on an early-churn watchlist (e.g. a lengthening gap versus their own normal purchase cycle) and trigger proactive outreach.
+
 **Expected outcome:** Retention spend on this group has the highest return in the base; preventing slippage here defends the ~50% of revenue it represents.
+
 **Owner:** Retention / account management.
 
 ### 3. Rebuild the new-customer pipeline — and re-measure acquisition
 **Based on:** Finding 1
+
 **Action:** Treat the falling new-customer revenue share as a leading risk. Judge acquisition channels on the **retained value** of the customers they bring, not on first-order volume, so the funnel refills with customers who survive month 2.
+
 **Expected outcome:** A healthier balance between core and pipeline, reducing long-run dependence on a single loyal cohort.
+
 **Owner:** Acquisition marketing.
 
 ---

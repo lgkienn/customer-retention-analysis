@@ -1,0 +1,27 @@
+# Intermediate / heavy files not needed in repo
+ecommerce_rfm.csv
+*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+venv/
+.venv/
+env/
+
+# Secrets
+.env
+*.env
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Working files (not part of portfolio)
+HANDOVER.md
+BUFFER.md
+PUBLISH-CHECKLIST.md
+SCREENSHOT-GUIDE.md

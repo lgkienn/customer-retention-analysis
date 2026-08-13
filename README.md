@@ -1,4 +1,4 @@
-# Customer Lifetime & Retention Analysis — UK Gift E-commerce
+# Customer Lifetime & Retention Analysis
 
 > A loyal core is masking a leaky acquisition funnel: 88% of revenue now comes from returning customers, while ~80% of every new cohort disappears by month two.
 

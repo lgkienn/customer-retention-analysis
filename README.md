@@ -9,11 +9,17 @@
 ## 📑 Table of Contents
 
 [📌 1. Background & Overview](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-1-background--overview)
+
 [📂 2. Dataset Description & Data Structure](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-2-dataset-description--data-structure) 
+
 [🧹 3. Data Cleaning & Preprocessing](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-3-data-cleaning--preprocessing) 
+
 [🧮 4. RFM Segmentation](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-4-rfm-segmentation) 
+
 [📊 5. Visualization & Analysis](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-5-visualization--analysis) 
+
 [🔄 6. Cohort & Retention Analysis](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-6-cohort--retention-analysis) 
+
 [💡 7. Insight & Recommendation](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-7-insight--recommendation)
 
 ---

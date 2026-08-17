@@ -1,257 +1,393 @@
-# Customer Lifetime & Retention Analysis
+# 📊 Customer Retention & Lifetime Analysis | Python
 
-> A loyal core is masking a leaky acquisition funnel: 88% of revenue now comes from returning customers, while ~80% of every new cohort disappears by month two.
+![Revenue growth is carried by returning customers](https://claude.ai/chat/images/charts/new_vs_returning_revenue.png)
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
-![Plotly](https://img.shields.io/badge/Plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+**Tools Used:** Python (pandas, matplotlib) · Streamlit · Plotly
 
 ---
 
-![Revenue growth is carried by returning customers](images/charts/new_vs_returning_revenue.png)
+## 📑 Table of Contents
+
+[📌 1. Background & Overview](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-1-background--overview) [📂 2. Dataset Description & Data Structure](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-2-dataset-description--data-structure) [🧹 3. Data Cleaning & Preprocessing](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-3-data-cleaning--preprocessing) [🧮 4. RFM Segmentation](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-4-rfm-segmentation) [📊 5. Visualization & Analysis](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-5-visualization--analysis) [🔄 6. Cohort & Retention Analysis](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-6-cohort--retention-analysis) [💡 7. Insight & Recommendation](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-7-insight--recommendation)
 
 ---
 
-## Key Takeaways
+## 📌 1. Background & Overview
 
-- **The top 5% of customers generate ~50% of revenue**, and Champions — 14% of customers — drive 58%. Revenue rests on a small, loyal core.
-- **~80% of every new customer cohort churns by month 2.** The acquisition funnel leaks badly and the drop-off is systematic, not random.
-- **Returning-customer revenue share rose from 49% to 88% over the year.** Reported growth is the loyal base compounding, not new customers arriving.
+### Objective
+
+📖 **What is this project about?**
+
+- Revenue was rising month after month, and the fourth quarter was the strongest of the year. For a UK online gift retailer selling to both individual shoppers and a large base of small-business wholesale buyers, every report said the business was healthy.
+- The problem is that a revenue line answers _how much_ without answering _who_. Growth won by acquiring new customers and growth produced by a shrinking group of loyal buyers spending more look **identical** on a revenue chart — but they are opposite situations, and they call for opposite responses.
+- This project rebuilds twelve months of transactions at **customer level** — RFM segmentation, cohort retention, and a new-versus-returning revenue split — to establish which of the two was actually happening.
+- **Scope:** December 2010 – December 2011 · 530,210 clean transaction lines · 4,335 identifiable customers.
+
+👤 **Who is this project for?**
+
+✔️ **Head of CRM / Lifecycle Marketing** — to know which point in the customer journey decides whether a buyer returns 
+✔️ **Head of Acquisition** — to see whether newly acquired customers survive long enough to repay their acquisition cost 
+✔️ **Commercial Director** — to understand how much of the revenue line depends on a small group of customers 
+✔️ **Customer Insight Manager** — to have a segmentation that names customers by behaviour, not by spend alone
+
+❓ **Business Questions:**
+
+✔️ Is revenue growth coming from new customers, or from the existing base buying again? 
+✔️ How concentrated is revenue — how much depends on the top few percent of customers? 
+✔️ Which customer segments actually generate revenue, and which are large but immaterial? 
+✔️ At what point in the lifecycle do customers stop coming back? 
+✔️ Is a repeat customer worth enough to justify spending to keep them?
+
+### 🧠 Design Thinking Process
+
+**1️⃣ Empathize**
+
+|Stakeholder|What they do today|Where it breaks down|
+|---|---|---|
+|**Head of CRM**|Sends campaigns on a monthly calendar|Campaigns follow the business calendar, not the customer's own journey — nobody knows which month decides retention|
+|**Head of Acquisition**|Reports new customers acquired per month|Success is measured at the first order, so a cohort that never returns still counts as a good month|
+|**Commercial Director**|Reviews total revenue and growth rate|The revenue line rises whether growth comes from thousands of new buyers or a few hundred loyal ones|
+
+**2️⃣ Define Point of View**
+
+> The commercial team needs to know **whether revenue growth is produced by new customers or by the existing base**, so they can tell compounding growth from concentration — **but every report aggregates revenue by period rather than by customer tenure**, which makes the two mathematically identical on the page.
+
+The distinction decides the action. If growth comes from acquisition, the priority is conversion and scale. If it comes from a shrinking loyal core, the priority is protecting that core and repairing the funnel behind it — and spending on acquisition would be spending into a leak.
+
+**3️⃣ Ideate**
+
+|Question to answer|Metric required|Section|
+|---|---|---|
+|New or returning growth?|Monthly revenue split by customer tenure|§ 5.1|
+|How concentrated is revenue?|Cumulative revenue by customer percentile|§ 5.2|
+|Which segments matter?|Customer share vs revenue share per segment|§ 5.3|
+|When do customers leave?|Retention by cohort and month since first purchase|§ 6.1|
+|Is retention worth paying for?|Average spend, repeat versus one-time|§ 6.2|
+
+**4️⃣ Prototype & Review**
+
+- **Every chart is generated by the notebook itself**, so each figure is reproducible from the code that made it.
+- The new-versus-returning chart carries **revenue on bars and returning share on a second axis**, because the bars show growth while only the line reveals who produced it.
+- The cohort heatmap is **annotated in two places** — the month-2 column and the December-2010 row — because the finding is the contrast between them, not the grid.
+- Segment charts show **customer share beside revenue share**, since a segment only becomes interesting when the two disagree.
+- **Guests are reported separately rather than silently dropped**, so revenue reconciles with the business's own totals.
 
 ---
 
-## Business Context
+## 📂 2. Dataset Description & Data Structure
 
-The business is a UK-based online retailer of all-occasion giftware, selling both to individual shoppers and to a large base of small-business wholesale buyers. Over the 12 months analysed, top-line revenue looked healthy and climbed steadily into the Q4 gifting season, peaking in November at 1.8× the monthly average.
+### 📌 Data Source
 
-That headline growth hid a question the marketing team could not answer from a revenue chart alone: *is the customer base actually getting stronger, or is a shrinking group of loyal buyers papering over a retention problem?* If growth depends on customers who were acquired long ago, then a good-looking quarter can mask a pipeline that has quietly stopped refilling — and by the time that shows up in revenue, it is expensive to fix.
+- **Source**: [UCI Machine Learning Repository — _Online Retail_](https://archive.ics.uci.edu/dataset/352/online+retail) (public dataset)
+- **Period**: 2010-12-01 → 2011-12-09
+- **Size**: 541,909 rows × 8 columns (raw) → 530,210 rows after cleaning
+- **Format**: `.csv`, processed entirely in pandas
+- **Grain**: 1 row = 1 product line within an invoice
 
----
+The dataset records transactions for a UK-based, registered non-store online retailer selling all-occasion giftware. It is published for research use and contains **no personal names** — customers are identified by number only.
 
-## Business Questions
+### 1️⃣ Tables Used
 
-1. Is revenue growth driven by **new customers** or by the **existing base**?
-2. **Where** in the customer lifecycle do buyers drop off?
-3. How **concentrated** is revenue across the customer base?
-4. Which customer **segments** deserve the marketing budget, and for what goal?
-5. What is the **real risk** hiding behind healthy top-line numbers?
+The source is a **single flat transaction file**. The analysis builds its own derived tables in pandas:
 
----
+|Derived table|Grain|Purpose|
+|---|---|---|
+|`df`|1 order line|Clean transactions — revenue totals, including guests|
+|`rfm`|1 customer|Recency / Frequency / Monetary scores and segment labels|
+|`retention`|1 cohort × month|Share of each cohort still buying|
+|`mr`|1 month|Revenue split into new versus returning|
 
-## Dataset Overview
+### 2️⃣ Table Schema
 
-| Attribute | Detail |
+|Column Name|Data Type|Description|
+|---|---|---|
+|**InvoiceNo**|`object`|Unique invoice number (6-digit). A `C` prefix indicates a cancellation|
+|**StockCode**|`object`|Product code (5-digit). Non-product codes exist: `POST`, `AMAZONFEE`, `BANK CHARGES`, `D`, `M`|
+|**Description**|`object`|Product name. 1,454 nulls|
+|**Quantity**|`int64`|Units purchased per line. Negative on returns|
+|**InvoiceDate**|`datetime64[ns]`|Date and time of the transaction|
+|**UnitPrice**|`float64`|Price per unit in sterling (£)|
+|**CustomerID**|`float64`|5-digit customer identifier. **Null = guest checkout**|
+|**Country**|`object`|Country where the customer resides|
+
+### 3️⃣ RFM Segmentation Mapping
+
+<details> <summary><b>📊 RFM score → segment mapping (click to expand)</b></summary>
+
+|**Segment**|**RFM Score**|
 |---|---|
-| **Source** | [UCI Machine Learning Repository — *Online Retail*](https://archive.ics.uci.edu/dataset/352/online+retail) (public) |
-| **Period** | 2010-12 to 2011-12 (~12 months) |
-| **Records** | 530,210 clean transaction lines (from 541,909 raw) |
-| **Customers** | 4,335 registered + guest checkouts |
-| **Grain** | 1 row = 1 product line within an invoice |
-
-> The full dataset (~47 MB, public — UCI *Online Retail*) is included in [`data/`](data/), and field definitions are in [`data_dictionary.md`](data_dictionary.md). The notebook and dashboard run on it directly, so every figure in this README is reproducible.
-
----
-
-## Analysis Approach
-
-```
-Raw CSV  →  Cleaning (pandas)  →  RFM segmentation  →  Cohort retention  →  New-vs-returning split
-```
-
-- **Cleaning** — remove cancellations, keep real product lines, separate guests from registered customers.
-- **RFM segmentation** — score every registered customer on Recency, Frequency, Monetary and map them to 11 named segments (Champions, Loyal, At Risk, …).
-- **Cohort retention** — group customers by first-purchase month and track how many return each following month.
-- **New-vs-returning revenue** — split each month's revenue into first-time and returning customers to see what is really driving growth.
-
-![Monthly revenue builds into Q4](images/charts/monthly_revenue_trend.png)
-
----
-
-## Key Findings
-
-### Finding 1 — Growth is returning-customer growth, not acquisition
-
-![New vs returning revenue by month](images/charts/new_vs_returning_revenue.png)
-
-Splitting monthly revenue by customer tenure reverses the obvious "growing business" reading. New-customer revenue share falls from 51% in January to 12% in November, while returning customers climb to 88% of the total. The strong Q4 — including the November peak — is overwhelmingly the existing base buying again for the holidays, not a wave of new customers. Growth is real, but it is **concentration deepening**, not the funnel widening.
-
----
-
-### Finding 2 — ~80% of each cohort is gone by month 2 — except one
-
-![Cohort retention heatmap](images/charts/cohort_retention_heatmap.png)
-
-Every monthly cohort loses roughly 80% of its customers by the second month (average month-2 retention 20%). The striking exception is the **December 2010 cohort**, which holds 35–50% retention across the entire year and even rebounds to 50% at month 12. That first cohort behaves like a true wholesale base; later 2011 cohorts increasingly do not. The retention curve is smooth and repeatable, which means the drop-off is a fixable onboarding problem, not random noise.
-
----
-
-### Finding 3 — Half of revenue comes from the top 5% of customers
-
-![Revenue concentration Pareto](images/charts/revenue_concentration_pareto.png)
-
-Revenue is heavily concentrated: the top 5% of customers account for ~50% of revenue and the top 20% for ~75%. Repeat buyers spend **6.9× more** on average than one-time buyers. This concentration is the reason the leaky funnel has not yet hurt the top line — but it is also the risk. A business leaning this hard on a thin core is exposed if that core is not actively protected and slowly replaced.
-
----
-
-### Finding 4 — Champions are 14% of customers but 58% of revenue
-
-![Segment: customers vs revenue](images/charts/segment_customers_vs_revenue.png)
-
-Mapping customers to RFM segments makes the imbalance concrete. Champions and Loyal customers are a minority of the base but the overwhelming majority of revenue, while large segments like Hibernating and Lost contribute almost nothing. This is what tells marketing *where* to spend: a point of retention among Champions is worth far more than a point of conversion among one-time buyers.
-
----
-
-## Business Recommendations
-
-### 1. Fix month-2 retention with a first-30-days journey
-**Based on:** Finding 2
-
-**Action:** Build a welcome / second-order journey whose single goal is a second purchase within 30 days — measured on month-2 retention, not open or click rate.
-
-**Expected outcome:** Because repeat buyers are worth 6.9× a one-time buyer, even small gains in month-2 retention compound into disproportionate revenue. The target retention lift is a decision for marketing to set against campaign cost, not a number this analysis can fix.
-
-**Owner:** CRM / lifecycle marketing.
-
-### 2. Protect the loyal core before it slips
-**Based on:** Findings 3 & 4
-
-**Action:** Put the top 5% of customers and all Champions on an early-churn watchlist (e.g. a lengthening gap versus their own normal purchase cycle) and trigger proactive outreach.
-
-**Expected outcome:** Retention spend on this group has the highest return in the base; preventing slippage here defends the ~50% of revenue it represents.
-
-**Owner:** Retention / account management.
-
-### 3. Rebuild the new-customer pipeline — and re-measure acquisition
-**Based on:** Finding 1
-
-**Action:** Treat the falling new-customer revenue share as a leading risk. Judge acquisition channels on the **retained value** of the customers they bring, not on first-order volume, so the funnel refills with customers who survive month 2.
-
-**Expected outcome:** A healthier balance between core and pipeline, reducing long-run dependence on a single loyal cohort.
-
-**Owner:** Acquisition marketing.
-
----
-
-## Data Cleaning & Preparation
-
-| Issue | Records Affected | Treatment | Rationale |
-|---|---|---|---|
-| Cancellations (`InvoiceNo` starts with `C`) | 9,288 (1.7%) | Removed | Returns are not demand; keeping them distorts revenue and frequency |
-| Non-product codes (`POST`, `AMAZONFEE`, `BANK CHARGES`, …) | 2,411 (0.5%) | Removed via 5-digit `StockCode` filter | Fees and postage are not products and would pollute segmentation |
-| Guest checkouts (null `CustomerID`) | 133,840 rows (25%) | Flagged, excluded from RFM/cohort | Guests cannot be tracked across visits; reported separately as ~15% of revenue |
-| Zero-price rows | 2,485 | Kept (contribute £0) | Back-fill from same product's list price where possible; residual has no revenue impact |
-
----
-
-## Technical Highlights
-
-<details>
-<summary><b>Recency scoring — inverting a quintile so "recent" scores high</b></summary>
-
-```python
-# qcut ranks low Recency (recent) as a low bin; invert so recent customers score 5
-rfm["R_Score"] = pd.qcut(rfm["Recency"], 5, labels=False, duplicates="drop")
-rfm["R_Score"] = rfm["R_Score"].max() - rfm["R_Score"] + 1
-```
-
-Frequency is heavily skewed (most customers have one invoice), so `Frequency.rank(method="first")` is passed to `qcut` to force stable quintiles instead of collapsing tied edges.
+|**Champions**|555, 554, 544, 545, 454, 455, 445|
+|**Loyal**|543, 444, 435, 355, 354, 345, 344, 335|
+|**Potential Loyalist**|553, 551, 552, 541, 542, 533, 532, 531, 452, 451, 442, 441, 431, 453, 433, 432, 423, 353, 352, 351, 342, 341, 333, 323|
+|**New Customers**|512, 511, 422, 421, 412, 411, 311|
+|**Promising**|525, 524, 523, 522, 521, 515, 514, 513, 425, 424, 413, 414, 415, 315, 314, 313|
+|**Need Attention**|535, 534, 443, 434, 343, 334, 325, 324|
+|**About To Sleep**|331, 321, 312, 221, 213, 231, 241, 251|
+|**At Risk**|255, 254, 245, 244, 253, 252, 243, 242, 235, 234, 225, 224, 153, 152, 145, 143, 142, 135, 134, 133, 125, 124|
+|**Cannot Lose Them**|155, 154, 144, 214, 215, 115, 114, 113|
+|**Hibernating Customers**|332, 322, 233, 232, 223, 222, 132, 123, 122, 212, 211|
+|**Lost Customers**|111, 112, 121, 131, 141, 151|
 
 </details>
 
-<details>
-<summary><b>Cohort index — vectorised month-offset without loops</b></summary>
+---
+
+## 🧹 3. Data Cleaning & Preprocessing
+
+### 🛠 Step 1. Inspect the raw data
+
+**⚡ Data Quality Insights**
+
+Four issues surfaced on first inspection, each needing a decision rather than a default:
+
+|Issue|Volume|Decision|
+|---|---|---|
+|Cancellations (`InvoiceNo` starts with `C`)|9,288 rows|**Remove** — returns are not demand|
+|Non-product codes (`POST`, `AMAZONFEE`, `BANK CHARGES`…)|2,411 rows|**Remove** — fees and postage are not sales|
+|`UnitPrice` = 0|2,515 rows|**Back-fill** from the same product's known price — a £0 line is a recording gap, not a free sale|
+|`CustomerID` is null (guest checkout)|135,080 rows (~25%)|**Flag, do not drop** — see below|
+
+### 🛠 Step 2. Apply the cleaning rules
+
+```python
+def load_clean(path):
+    df = pd.read_csv(path, dtype={"InvoiceNo": str, "StockCode": str},
+                     parse_dates=["InvoiceDate"])
+
+    df = df[~df["InvoiceNo"].str.startswith("C")]           # 1. drop cancellations
+    valid = df["StockCode"].str.match(r"^\d{5}.*$")         # 2. real product lines only
+
+    # 3. back-fill zero prices from the same product's known price
+    price_map = (df.loc[df["UnitPrice"] > 0, ["StockCode", "UnitPrice"]]
+                   .drop_duplicates("StockCode")
+                   .set_index("StockCode")["UnitPrice"])
+    zero = df["UnitPrice"] == 0
+    df.loc[zero, "UnitPrice"] = df.loc[zero, "StockCode"].map(price_map)
+
+    df = df[valid].copy()
+    df["CustomerType"] = np.where(df["CustomerID"].isna(), "Guest", "Registered")  # 4. flag guests
+    df["Revenue"] = df["Quantity"] * df["UnitPrice"]
+    return df
+```
+
+**Result:** 541,909 → **530,210 rows** (74.8% registered, 25.2% guest).
+
+### 🛠 Step 3. Decide what to do with guests
+
+> **The most consequential decision in this project.** Guest checkouts are ~25% of rows and **11.9% of revenue**. They have no `CustomerID`, so they cannot be tracked across visits — RFM and cohort analysis are impossible for them.
+> 
+> The common shortcut is `dropna()` on `CustomerID`, which silently removes 11.9% of the business's revenue from every total. Instead, guests are **excluded only from customer-level analysis** and **retained in revenue totals**, where they represent real sales.
+
+**✨ Conclusion:** every customer-level figure below (§4, §5.2, §5.3, §6) is computed on **registered customers only**; revenue totals include everyone.
+
+---
+
+## 🧮 4. RFM Segmentation
+
+### 🛠 Step 1. Build the RFM table
+
+For each registered customer: **Recency** (days since last order), **Frequency** (distinct invoices), **Monetary** (total revenue).
+
+```python
+ANALYSIS_DATE = pd.Timestamp("2011-12-31")
+
+rfm = (reg.groupby("CustomerID")
+          .agg(LastPurchase=("InvoiceDate", "max"),
+               Frequency=("InvoiceNo", "nunique"),
+               Monetary=("Revenue", "sum"))
+          .reset_index())
+rfm["Recency"] = (ANALYSIS_DATE - rfm["LastPurchase"]).dt.days
+```
+
+### 🛠 Step 2. Assign scores using `qcut`
+
+```python
+# Recency: lower is better, so the quintile is inverted — recent customers score 5
+rfm["R_Score"] = pd.qcut(rfm["Recency"], 5, labels=False, duplicates="drop")
+rfm["R_Score"] = rfm["R_Score"].max() - rfm["R_Score"] + 1
+
+rfm["F_Score"] = pd.qcut(rfm["Frequency"], 5, labels=False, duplicates="drop") + 1
+rfm["M_Score"] = pd.qcut(rfm["Monetary"],  5, labels=False, duplicates="drop") + 1
+
+rfm["RFM"] = rfm[["R_Score", "F_Score", "M_Score"]].astype(str).agg("".join, axis=1)
+rfm["Segment"] = rfm["RFM"].map(to_segment)      # 11-segment grid
+```
+
+### 📋 Segment profile — all 11 segments
+
+**Total: 4,335 registered customers**
+
+|Segment|Customers|% of base|Avg Recency (days)|Avg Frequency|Avg Spend (£)|% of revenue|
+|---|---|---|---|---|---|---|
+|**Champions**|609|14.0%|31|15|8,291|**57.5%**|
+|**Loyal**|251|5.8%|59|7|3,184|9.1%|
+|**Promising**|492|11.3%|49|2|1,448|8.1%|
+|**At Risk**|237|5.5%|153|5|2,357|6.4%|
+|**Need Attention**|345|8.0%|48|4|1,606|6.3%|
+|**Cannot Lose Them**|229|5.3%|238|2|1,541|4.0%|
+|**About To Sleep**|331|7.6%|105|2|494|1.9%|
+|**Hibernating**|485|11.2%|146|2|341|1.9%|
+|**Potential Loyalist**|228|5.3%|49|4|691|1.8%|
+|**Lost**|622|14.3%|297|1|230|1.6%|
+|**New Customers**|506|11.7%|49|1|235|1.4%|
+
+**📊 Observations**
+
+- **Champions** are the only segment where average frequency reaches double digits (15 orders) and average spend is more than 2.5× the next-highest segment.
+- **Lost** is the _largest_ segment by headcount (622 customers, 14.3%) yet contributes 1.6% of revenue — an average recency of 297 days means most have been absent for the better part of a year.
+- **Cannot Lose Them** carries the second-worst recency (238 days) but an average spend of £1,541 — these are valuable customers who have already drifted, and they are the most urgent group in the table.
+- **At Risk** shows the same pattern at an earlier stage: 153 days since last order, but 5 orders and £2,357 average spend.
+
+---
+
+## 📊 5. Visualization & Analysis
+
+### 5.1 Revenue growth: new customers or the existing base?
 
 ```python
 reg["CohortMonth"] = reg.groupby("CustomerID")["OrderMonth"].transform("min")
-reg["CohortIndex"] = ((reg["OrderMonth"].dt.year  - reg["CohortMonth"].dt.year) * 12
-                    +  (reg["OrderMonth"].dt.month - reg["CohortMonth"].dt.month) + 1)
+reg["is_new"]      = reg["OrderMonth"] == reg["CohortMonth"]
+
+mr = reg.groupby(["OrderMonth", "is_new"])["Revenue"].sum().unstack()
+mr.columns = ["Returning", "New"]
+mr["Returning_share_%"] = mr["Returning"] / (mr["Returning"] + mr["New"]) * 100
 ```
 
-The whole retention table is then a single `groupby → pivot → divide` by each cohort's month-1 count.
+![New vs returning revenue](https://claude.ai/chat/images/charts/new_vs_returning_revenue.png)
 
-</details>
+- Returning-customer revenue (teal) grows every month while new-customer revenue (coral) shrinks to a thin band by the end of the year.
+- The returning share climbs from **0%** in the opening month — when by definition every customer is new — to **87%** by November.
+- Revenue peaks in the final months, and the overwhelming majority of that peak is returning customers.
 
-<details>
-<summary><b>New-vs-returning split — the chart that drives the thesis</b></summary>
+➡️ **Growth is the existing base compounding, not the funnel widening — the revenue line is rising for a reason that cannot repeat indefinitely.**
+
+### 5.2 How concentrated is revenue?
+
+![Revenue concentration](https://claude.ai/chat/images/charts/revenue_concentration_pareto.png)
+
+- The **top 5% of customers account for 50% of revenue**.
+- The **top 20% account for 75%**; the curve is steep on the left and nearly flat across the remaining 80% of the base.
+
+➡️ **The business rests on a few hundred customers, which makes protecting them a higher-value activity than acquiring replacements for the long tail.**
+
+### 5.3 Which segments actually generate revenue?
+
+![Segment: customers vs revenue](https://claude.ai/chat/images/charts/segment_customers_vs_revenue.png)
+
+- **Champions are 14% of customers but 58% of revenue** — the widest gap in the chart.
+- **Lost** and **Hibernating** together account for roughly a quarter of the customer base and under 4% of revenue.
+- The ranking by headcount and the ranking by revenue are almost the reverse of each other.
+
+➡️ **Segment size is a misleading target — a campaign reaching the most customers would reach the least revenue.**
+
+### 5.4 Interactive dashboard
+
+The same segmentation is delivered as a **Streamlit application**, so the analysis can be explored rather than read.
+
+![Dashboard overview](https://claude.ai/chat/images/dashboard/overview.png)
+
+- Headline KPIs across the period: **0.53M transactions · $9.96M revenue · 5.44M units · 74.8% registered customers**.
+- The segment charts confirm the imbalance: **Lost customers (622) slightly outnumber Champions (609)**, yet Champions contribute **57.5%** of revenue against **1.6%** for Lost.
+- Revenue contribution beyond Champions falls away quickly — Loyal 9.1%, Promising 8.1%, At Risk 6.4%, Need Attention 6.3%.
+
+➡️ **Two segments of almost identical size sit at opposite ends of the value scale, which is the clearest possible argument for targeting by behaviour rather than by volume.**
+
+---
+
+## 🔄 6. Cohort & Retention Analysis
+
+### 6.1 Where in the lifecycle do customers stop returning?
 
 ```python
-reg["is_new"] = reg["OrderMonth"] == reg["CohortMonth"]
-mr = reg.groupby(["OrderMonth", "is_new"])["Revenue"].sum().unstack()
-mr["Returning_share_%"] = mr["Returning"] / mr.sum(axis=1) * 100
+reg["CohortIndex"] = ((reg["OrderMonth"].dt.year  - reg["CohortMonth"].dt.year) * 12
+                    +  (reg["OrderMonth"].dt.month - reg["CohortMonth"].dt.month) + 1)
+
+counts    = (reg.groupby(["CohortMonth", "CohortIndex"])["CustomerID"].nunique()
+                .reset_index()
+                .pivot(index="CohortMonth", columns="CohortIndex", values="CustomerID"))
+retention = counts.divide(counts[1], axis=0)
 ```
 
-</details>
+![Cohort retention heatmap](https://claude.ai/chat/images/charts/cohort_retention_heatmap.png)
 
----
+- Month-2 retention across the 2011 cohorts runs between **11% and 24%** — roughly **80% of each cohort does not return** after the first month.
+- The **December 2010 cohort behaves completely differently**, holding **37%, 32%, 38%, 36%, 40%** through its first five months and still reaching **50%** at month 12.
+- The drop appears in the same position for every cohort, which makes it a structural pattern rather than noise.
 
-## Repository Structure
+> The data ends on 9 December 2011, so the final partial month and the newest one or two cohorts have a shortened observation window. Their retention is understated and should not be read as declining quality.
 
+➡️ **Churn is concentrated at one predictable moment rather than spread across the year, and the December cohort proves a far higher retention level is achievable with this product.**
+
+### 6.2 Segment migration over time
+
+![Segment migration](https://claude.ai/chat/images/dashboard/segment_migration.png)
+
+Comparing quarterly snapshots (2011 Q3 → Q4) shows the direction of movement between segments. Flows run out of **Champions** and **Loyal** into **At Risk** and **Hibernating**, while **Hibernating** receives inflows from nearly every other segment and returns very little.
+
+➡️ **Customers do not disappear abruptly — they slide down through intermediate states, which means there is an observable window in which intervention is still possible.**
+
+### 6.3 Is a repeat customer worth keeping?
+
+```python
+one_time = (rfm["Frequency"] == 1).mean() * 100
+ratio    = (rfm.loc[rfm["Frequency"] >= 2, "Monetary"].mean()
+          / rfm.loc[rfm["Frequency"] == 1, "Monetary"].mean())
 ```
-customer-retention-analysis/
-├── data/
-│   └── ecommerce_retail.csv # Full public dataset (~47 MB)
-├── notebooks/
-│   └── analysis.ipynb       # End-to-end analysis on the full dataset
-├── dashboard/               # Streamlit app (RFM, cohort, migration, heatmaps)
-├── images/
-│   ├── charts/              # Static charts used in this README
-│   └── dashboard/           # Dashboard screenshots
-├── data_dictionary.md
-├── requirements.txt
-└── README.md
-```
+
+|Metric|Value|
+|---|---|
+|Customers who bought only once|**34.7%**|
+|Repeat-to-one-time average spend ratio|**6.8×**|
+|Top 10% of customers, share of revenue|**61.3%**|
+|Average month-2 retention|**20.4%**|
+
+➡️ **Retention is a revenue metric, not a service metric — the gap between a one-time and a repeat customer is the largest single value difference in the dataset.**
 
 ---
 
-## How to Run
+## 💡 7. Insight & Recommendation
 
-**Prerequisites:** Python 3.10+
+Several segments share the same underlying behaviour, so they can be grouped into four clusters for strategy.
 
-1. Clone and install
-   ```bash
-   git clone https://github.com/lgkienn/customer-retention-analysis.git
-   cd customer-retention-analysis
-   pip install -r requirements.txt
-   ```
-2. Run the analysis notebook
-   ```bash
-   jupyter notebook notebooks/analysis.ipynb
-   ```
-   It runs end-to-end on the included full dataset — every figure in this README is reproducible.
-3. (Optional) launch the interactive dashboard
-   ```bash
-   streamlit run dashboard/app.py
-   ```
+### Group 1: Loyal & High-Value (19.8% of customers · 66.6% of revenue)
 
----
+📌 **Includes:** Champions (14.0%), Loyal (5.8%)
 
-## Interactive Dashboard
+💡 **Why grouped:** short recency (31–59 days), the only segments with meaningful repeat frequency, and average spend well above every other group. Two-thirds of all revenue sits here.
 
-The analysis is also delivered as a Streamlit app with RFM distribution, an R×F heatmap, a segment-migration Sankey, and cohort views.
+🔹 **Recommendation:** place these customers on a proactive watchlist triggered by a lengthening gap against their _own_ purchase cycle. Shift budget from broad-reach sends toward this group, and protect it with margin-neutral benefits rather than discounts. **Owner:** Head of CRM with Customer Insight Manager.
 
-![Dashboard overview](images/dashboard/overview.png)
+### Group 2: Slipping High-Value (18.8% of customers · 16.7% of revenue)
 
-![Segment migration](images/dashboard/segment_migration.png)
+📌 **Includes:** At Risk (5.5%), Cannot Lose Them (5.3%), Need Attention (8.0%)
 
----
+💡 **Why grouped:** all three combine **above-average spend with deteriorating recency** (48 to 238 days). They were valuable and are drifting — the segment migration view shows exactly this flow toward Hibernating.
 
-## Challenges & Limitations
+🔹 **Recommendation:** run re-engagement with personalised incentives, prioritised by past spend rather than by recency alone. Cannot Lose Them is the most urgent: 238 days absent at £1,541 average spend. **Owner:** Head of CRM / Lifecycle Marketing.
 
-**Limitations**
-- **No cost or discount field.** Revenue is list price × quantity, so margin and profitability are out of scope; all findings are revenue- and behaviour-based.
-- **Guests cannot be tracked.** ~25% of transactions (15% of revenue) have no customer ID and are excluded from RFM and cohort analysis.
-- **Truncated final cohorts.** Data ends 2011-12-09, so the newest 1–2 cohorts and the final partial month have a shortened observation window and understate retention.
+### Group 3: New & Potential (28.3% of customers · 11.3% of revenue)
 
-**Future Improvements**
-- Add a survival-analysis view (time-to-second-purchase) to measure, in days, how long customers take to reorder and what share never return — a more precise view of the month-2 cliff than monthly cohorts, and one that handles still-active customers correctly.
-- Compare retention by country (UK vs non-UK) to see whether the loyal core is geographically concentrated and whether overseas customers churn differently.
+📌 **Includes:** New Customers (11.7%), Promising (11.3%), Potential Loyalist (5.3%)
 
----
+💡 **Why grouped:** recent (≈49 days) but low frequency — one to two orders. This is precisely the population that the month-2 cliff consumes.
 
-## Author
+🔹 **Recommendation:** build a **first-30-days journey** whose single goal is a second order, measured on month-2 retention rather than open or click rate. Judge acquisition channels on retained value at month two, not first-order volume. **Owner:** Head of Acquisition with CRM.
 
-**Lương Thế Kiện (Jay)**
-Data Analyst — customer analytics, retention, and BI
+### Group 4: Inactive & Lost (33.1% of customers · 5.4% of revenue)
 
-[GitHub](https://github.com/lgkienn) · [LinkedIn](https://linkedin.com/in/your-profile](https://www.linkedin.com/in/ltkien1706 ) · [Email](mailto:luongkienss68@gmail.com)
+📌 **Includes:** Lost (14.3%), Hibernating (11.2%), About To Sleep (7.6%)
+
+💡 **Why grouped:** long absence (105–297 days), one to two lifetime orders, and negligible revenue. A third of the customer base contributes about a twentieth of revenue.
+
+🔹 **Recommendation:** stop spending general campaign budget here. Run one low-cost win-back test and treat non-responders as lapsed for planning purposes, rather than continuing to count them as customers. **Owner:** Head of CRM.
+
+### 📌 Final Conclusion
+
+| **Aspect**                | **Insight**                                                                                                   | **Recommendation**                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Source of growth**      | Returning customers account for 87% of revenue by November, while new-customer revenue shrinks to a thin band | Report new and returning revenue as separate lines in the monthly review, so concentration cannot hide inside a growth number |
+| **The month-2 cliff**     | Around 80% of every cohort fails to return in month two, while the December 2010 cohort holds 35–50% all year | Build a first-30-days journey with a single goal — a second order — and measure it on month-2 retention                       |
+| **Revenue concentration** | The top 5% of customers generate 50% of revenue; Champions alone are 57.5%                                    | Put the top 5% and all Champions on a proactive early-warning watchlist                                                       |
+| **Value of retention**    | Repeat buyers spend 6.8× more than one-time buyers, and 34.7% of customers never return                       | Judge acquisition channels on retained value at month two, not on first-order volume                                          |
+| **Segment targeting**     | Lost customers (622) outnumber Champions (609) but deliver 1.6% of revenue against 57.5%                      | Reallocate campaign budget from broad-reach sends toward Champions and slipping high-value customers                          |
+|                           |                                                                                                               |                                                                                                                               |

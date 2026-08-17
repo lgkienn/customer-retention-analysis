@@ -32,16 +32,23 @@
 👤 **Who is this project for?**
 
 ✔️ **Head of CRM / Lifecycle Marketing** — to know which point in the customer journey decides whether a buyer returns 
+
 ✔️ **Head of Acquisition** — to see whether newly acquired customers survive long enough to repay their acquisition cost 
+
 ✔️ **Commercial Director** — to understand how much of the revenue line depends on a small group of customers 
+
 ✔️ **Customer Insight Manager** — to have a segmentation that names customers by behaviour, not by spend alone
 
 ❓ **Business Questions:**
 
 ✔️ Is revenue growth coming from new customers, or from the existing base buying again? 
+
 ✔️ How concentrated is revenue — how much depends on the top few percent of customers? 
+
 ✔️ Which customer segments actually generate revenue, and which are large but immaterial? 
+
 ✔️ At what point in the lifecycle do customers stop coming back? 
+
 ✔️ Is a repeat customer worth enough to justify spending to keep them?
 
 ### 🧠 Design Thinking Process

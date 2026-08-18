@@ -8,19 +8,19 @@
 
 ## 📑 Table of Contents
 
-[📌 1. Background & Overview](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-1-background--overview)
+[📌 1. Background & Overview](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-1-background--overview)
 
-[📂 2. Dataset Description & Data Structure](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-2-dataset-description--data-structure) 
+[📂 2. Dataset Description & Data Structure](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-2-dataset-description--data-structure) 
 
-[🧹 3. Data Cleaning & Preprocessing](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-3-data-cleaning--preprocessing) 
+[🧹 3. Data Cleaning & Preprocessing](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-3-data-cleaning--preprocessing) 
 
-[🧮 4. RFM Segmentation](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-4-rfm-segmentation) 
+[🧮 4. RFM Segmentation](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-4-rfm-segmentation) 
 
-[📊 5. Visualization & Analysis](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-5-visualization--analysis) 
+[📊 5. Visualization & Analysis](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-5-visualization--analysis) 
 
-[🔄 6. Cohort & Retention Analysis](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-6-cohort--retention-analysis) 
+[🔄 6. Cohort & Retention Analysis](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-6-cohort--retention-analysis) 
 
-[💡 7. Insight & Recommendation](https://claude.ai/chat/7a4495c2-8d27-4238-a74f-8bcd885a4e13#-7-insight--recommendation)
+[💡 7. Insight & Recommendation](7a4495c2-8d27-4238-a74f-8bcd885a4e13#-7-insight--recommendation)
 
 ---
 
@@ -272,7 +272,7 @@ mr.columns = ["Returning", "New"]
 mr["Returning_share_%"] = mr["Returning"] / (mr["Returning"] + mr["New"]) * 100
 ```
 
-![New vs returning revenue](https://claude.ai/chat/images/charts/new_vs_returning_revenue.png)
+![New vs returning revenue](images/charts/new_vs_returning_revenue.png)
 
 - Returning-customer revenue (teal) grows every month while new-customer revenue (coral) shrinks to a thin band by the end of the year.
 - The returning share climbs from **0%** in the opening month — when by definition every customer is new — to **87%** by November.
@@ -282,7 +282,7 @@ mr["Returning_share_%"] = mr["Returning"] / (mr["Returning"] + mr["New"]) * 100
 
 ### 5.2 How concentrated is revenue?
 
-![Revenue concentration](https://claude.ai/chat/images/charts/revenue_concentration_pareto.png)
+![Revenue concentration](images/charts/revenue_concentration_pareto.png)
 
 - The **top 5% of customers account for 50% of revenue**.
 - The **top 20% account for 75%**; the curve is steep on the left and nearly flat across the remaining 80% of the base.
@@ -291,7 +291,7 @@ mr["Returning_share_%"] = mr["Returning"] / (mr["Returning"] + mr["New"]) * 100
 
 ### 5.3 Which segments actually generate revenue?
 
-![Segment: customers vs revenue](https://claude.ai/chat/images/charts/segment_customers_vs_revenue.png)
+![Segment: customers vs revenue](images/charts/segment_customers_vs_revenue.png)
 
 - **Champions are 14% of customers but 58% of revenue** — the widest gap in the chart.
 - **Lost** and **Hibernating** together account for roughly a quarter of the customer base and under 4% of revenue.
@@ -303,7 +303,7 @@ mr["Returning_share_%"] = mr["Returning"] / (mr["Returning"] + mr["New"]) * 100
 
 The same segmentation is delivered as a **Streamlit application**, so the analysis can be explored rather than read.
 
-![Dashboard overview](https://claude.ai/chat/images/dashboard/overview.png)
+![Dashboard overview](images/dashboard/overview.png)
 
 - Headline KPIs across the period: **0.53M transactions · $9.96M revenue · 5.44M units · 74.8% registered customers**.
 - The segment charts confirm the imbalance: **Lost customers (622) slightly outnumber Champions (609)**, yet Champions contribute **57.5%** of revenue against **1.6%** for Lost.
@@ -327,7 +327,7 @@ counts    = (reg.groupby(["CohortMonth", "CohortIndex"])["CustomerID"].nunique()
 retention = counts.divide(counts[1], axis=0)
 ```
 
-![Cohort retention heatmap](https://claude.ai/chat/images/charts/cohort_retention_heatmap.png)
+![Cohort retention heatmap](images/charts/cohort_retention_heatmap.png)
 
 - Month-2 retention across the 2011 cohorts runs between **11% and 24%** — roughly **80% of each cohort does not return** after the first month.
 - The **December 2010 cohort behaves completely differently**, holding **37%, 32%, 38%, 36%, 40%** through its first five months and still reaching **50%** at month 12.
@@ -339,7 +339,7 @@ retention = counts.divide(counts[1], axis=0)
 
 ### 6.2 Segment migration over time
 
-![Segment migration](https://claude.ai/chat/images/dashboard/segment_migration.png)
+![Segment migration](images/dashboard/segment_migration.png)
 
 Comparing quarterly snapshots (2011 Q3 → Q4) shows the direction of movement between segments. Flows run out of **Champions** and **Loyal** into **At Risk** and **Hibernating**, while **Hibernating** receives inflows from nearly every other segment and returns very little.
 

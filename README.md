@@ -1,6 +1,6 @@
 # 📊 Customer Retention & Lifetime Analysis | Python
 
-![Revenue growth is carried by returning customers](https://claude.ai/chat/images/charts/new_vs_returning_revenue.png)
+![Revenue growth is carried by returning customers](images/charts/new_vs_returning_revenue.png)
 
 **Tools Used:** Python (pandas, matplotlib) · Streamlit · Plotly
 
